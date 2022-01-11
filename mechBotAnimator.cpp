@@ -609,17 +609,12 @@ void keyboardHandler(unsigned char key, int x, int y)
 		exit(0);
 		break;
 	case 'a':
-		// Add code to create timer and call animation handler
-		//......
-		// Use this to set to 3D window and redraw it
 		stop = false;
 		glutTimerFunc(50, animationHandler, 0);
 		glutSetWindow(window3D);
 		glutPostRedisplay();
 		break;
 	case 'r':
-		// reset object position at beginning of curve
-		//.......
 		stop = true;
 		moveX = 1 / 2 * (subcurve.curvePoints[0].x - subcurve.curvePoints[curveIndex].x);
 		moveZ = 1 / 2 * (subcurve.curvePoints[0].y - subcurve.curvePoints[curveIndex].y);
@@ -709,7 +704,7 @@ void reshape(int w, int h)
  *
  * 3D Window Code
  *
- * Fill in the code in the empty functions
+ * 
  ************************************************************************************/
 
 
@@ -784,18 +779,11 @@ void animationHandler(int param)
 		//Collision detection for shooting robot 1
 		if (fabs(subcurve.curvePoints[curveIndex].x - bulletX) < 0.8 && fabs(subcurve.curvePoints[curveIndex].y - (12.0 - proj)) < 0.5) {
 			hit = true;
-			//Uncomment the following line to view cannon destroy animation
-			//cannonHit = true;
 		}
 		//Collision detection for shooting robot 2
 		if (fabs(subcurve2.curvePoints[curveIndex].x + 3 - bulletX) < 0.8 && fabs(subcurve2.curvePoints[curveIndex].y - (12.0 - proj)) < 0.5) {
 			hit2 = true;
 		}
-
-		//Non-working code for cannon collision
-		//if (fabs(proj2*(tan(oldangle * (3.14 / 180))) + circles[0].circleCenter.x + moveX - control) < 0.5 && fabs(proj2 - 12.0) < 0.5) {
-			//cannonHit = true;
-		//}
 
 		//Switches to first person
 		if (fp == true) {
@@ -942,34 +930,34 @@ void drawBot()
 	//Delete bot after it is shot or reaches end
 	if (count < 3 and curveIndex < 64) {
 		glPushMatrix();
-			glColor3f(0.2, 0.2, 0.2);
-			//Follows the path
-			glTranslatef(moveX, 0, moveZ);
-			//Moves to first point
-			glTranslatef(circles[0].circleCenter.x, 0, -2 * circles[0].circleCenter.y);
-			//Rotates to face forward
-			glRotatef(angle, 0, 1, 0);
-			//Spin animation after bot is hit
-			if (hit == true) {
-				glRotatef(25 * curveIndex, 0, 0, 1);
-				count += 1;
-			}
-			//Draw robot minus head
-			drawRobot();
+		glColor3f(0.2, 0.2, 0.2);
+		//Follows the path
+		glTranslatef(moveX, 0, moveZ);
+		//Moves to first point
+		glTranslatef(circles[0].circleCenter.x, 0, -2 * circles[0].circleCenter.y);
+		//Rotates to face forward
+		glRotatef(angle, 0, 1, 0);
+		//Spin animation after bot is hit
+		if (hit == true) {
+			glRotatef(25 * curveIndex, 0, 0, 1);
+			count += 1;
+		}
+		//Draw robot minus head
+		drawRobot();
 
-			//Rotate head to follow cannon
-			glRotatef(gunAngle - angle, 0, 1, 0);
+		//Rotate head to follow cannon
+		glRotatef(gunAngle - angle, 0, 1, 0);
 
-			glEnable(GL_TEXTURE_GEN_S);
-			glEnable(GL_TEXTURE_GEN_T);
-			glBindTexture(GL_TEXTURE_2D, tex[1]);
+		glEnable(GL_TEXTURE_GEN_S);
+		glEnable(GL_TEXTURE_GEN_T);
+		glBindTexture(GL_TEXTURE_2D, tex[1]);
 
-			gluQuadricDrawStyle(gluNewQuadric(), GLU_FILL);
-			glPolygonMode(GL_FRONT, GL_FILL);
-			gluQuadricNormals(gluNewQuadric(), GLU_SMOOTH);
-			drawHead();
-			glDisable(GL_TEXTURE_GEN_S);
-			glDisable(GL_TEXTURE_GEN_T);
+		gluQuadricDrawStyle(gluNewQuadric(), GLU_FILL);
+		glPolygonMode(GL_FRONT, GL_FILL);
+		gluQuadricNormals(gluNewQuadric(), GLU_SMOOTH);
+		drawHead();
+		glDisable(GL_TEXTURE_GEN_S);
+		glDisable(GL_TEXTURE_GEN_T);
 
 		glPopMatrix();
 	}
@@ -1029,36 +1017,36 @@ void drawRobot()
 void drawBody()
 {
 	glPushMatrix();
-		glTranslatef(0, 3.5 * robotBodyLength, 0);
-		glPushMatrix();
-			glScalef(robotBodyWidth, robotBodyLength, robotBodyDepth);
-			glRotatef(90, 1, 0, 0);
-			gluDisk(gluNewQuadric(), 0, 0.5, 20, 10);
-			gluCylinder(gluNewQuadric(), 0.5, 0.5, 1, 20, 10);
-		glPopMatrix();
-		// Robot neck
-		glPushMatrix();
-			glTranslatef(0, robotBodyLength, 0);
-			glScalef(robotBodyWidth / 5, robotBodyLength * 3, robotBodyDepth / 2);
-			glRotatef(90, 1, 0, 0);
-			gluCylinder(gluNewQuadric(), 0.5, 0.5, 1, 20, 10);
-		glPopMatrix();
-		glPushMatrix();
-			glTranslatef(robotBodyWidth / 2, -robotBodyWidth / 2.8, 0);
-			// Wheel axle
-			glPushMatrix();
-				glTranslatef(-0.2, -robotBodyWidth * 0.25, 0);
-				glRotatef(90, 0, 1, 0);
-				gluDisk(gluNewQuadric(), 0, 1.3 / 12, 20, 10);
-				gluCylinder(gluNewQuadric(), 1.3 / 12, 1.3 / 12, 1.3 / 6, 20, 10);
-			glPopMatrix();
-			//Connecting piece between body and axle
-			glScalef(robotBodyDepth / 4, robotBodyWidth * 0.4, robotBodyDepth / 4);
-			glTranslatef(0, 0.8, 0);
-			glRotatef(90, 1, 0, 0);
-			gluDisk(gluNewQuadric(), 0, 0.5, 20, 10);
-			gluCylinder(gluNewQuadric(), 0.5, 0.5, 1.5, 20, 10);
-		glPopMatrix();
+	glTranslatef(0, 3.5 * robotBodyLength, 0);
+	glPushMatrix();
+	glScalef(robotBodyWidth, robotBodyLength, robotBodyDepth);
+	glRotatef(90, 1, 0, 0);
+	gluDisk(gluNewQuadric(), 0, 0.5, 20, 10);
+	gluCylinder(gluNewQuadric(), 0.5, 0.5, 1, 20, 10);
+	glPopMatrix();
+	// Robot neck
+	glPushMatrix();
+	glTranslatef(0, robotBodyLength, 0);
+	glScalef(robotBodyWidth / 5, robotBodyLength * 3, robotBodyDepth / 2);
+	glRotatef(90, 1, 0, 0);
+	gluCylinder(gluNewQuadric(), 0.5, 0.5, 1, 20, 10);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(robotBodyWidth / 2, -robotBodyWidth / 2.8, 0);
+	// Wheel axle
+	glPushMatrix();
+	glTranslatef(-0.2, -robotBodyWidth * 0.25, 0);
+	glRotatef(90, 0, 1, 0);
+	gluDisk(gluNewQuadric(), 0, 1.3 / 12, 20, 10);
+	gluCylinder(gluNewQuadric(), 1.3 / 12, 1.3 / 12, 1.3 / 6, 20, 10);
+	glPopMatrix();
+	//Connecting piece between body and axle
+	glScalef(robotBodyDepth / 4, robotBodyWidth * 0.4, robotBodyDepth / 4);
+	glTranslatef(0, 0.8, 0);
+	glRotatef(90, 1, 0, 0);
+	gluDisk(gluNewQuadric(), 0, 0.5, 20, 10);
+	gluCylinder(gluNewQuadric(), 0.5, 0.5, 1.5, 20, 10);
+	glPopMatrix();
 	glPopMatrix();
 }
 
@@ -1066,46 +1054,41 @@ void drawBody()
 void drawHead()
 {
 	glPushMatrix();
-		glTranslatef(0, robotBodyLength * 6, -headLength / 3);
-		//Bullets from robot
-		glPushMatrix();
-			//Non working code to prevent tracking bullets from robots
-			//if (proj2 == 0) {
-			//	oldangle = gunAngle;							
-			//}
-			//glRotatef(-oldangle + gunAngle, 0, 1, 0);
-			glTranslatef(0, 0, proj2);
-			gluSphere(gluNewQuadric(), 0.10, 20, 10);
-		glPopMatrix();
-		//Building robot head
-		gluDisk(gluNewQuadric(), 0, headRadius, 20, 10);
-		glPushMatrix();
-			glTranslatef(0, 0, headLength);
-			gluDisk(gluNewQuadric(), 0, 0.1, 20, 10);
-		glPopMatrix();
-		gluCylinder(gluNewQuadric(), headRadius, 0.1, headLength, 20, 10);
+	glTranslatef(0, robotBodyLength * 6, -headLength / 3);
+	//Bullets from robot
+	glPushMatrix();
+	glTranslatef(0, 0, proj2);
+	gluSphere(gluNewQuadric(), 0.10, 20, 10);
+	glPopMatrix();
+	//Building robot head
+	gluDisk(gluNewQuadric(), 0, headRadius, 20, 10);
+	glPushMatrix();
+	glTranslatef(0, 0, headLength);
+	gluDisk(gluNewQuadric(), 0, 0.1, 20, 10);
+	glPopMatrix();
+	gluCylinder(gluNewQuadric(), headRadius, 0.1, headLength, 20, 10);
 	glPopMatrix();
 }
 
 void drawLowerBody()
 {
 	glPushMatrix();
-		glScalef(robotBodyWidth / 3, robotBodyLength * 1.5, robotBodyLength * 1.5);
-		glRotatef(90, 0, 1, 0);
-		glTranslatef(0, -robotBodyLength * 3.5, 0);
-		glPushMatrix();
-			glTranslatef(0, 0, -1);
-			gluCylinder(gluNewQuadric(), 1, 2.3, 1, 20, 10);
-		glPopMatrix();
-		gluCylinder(gluNewQuadric(), 2.3, 1, 1, 20, 10);
-		glPushMatrix();
-			glTranslatef(0, 0, 1);
-			gluDisk(gluNewQuadric(), 0, 1, 32, 1);
-		glPopMatrix();
-		glTranslatef(0, 0, -robotBodyLength * 0.7);
-		glTranslatef(0, 0, -0.95);
-		glRotatef(180, 0, 1, 0);
-		gluDisk(gluNewQuadric(), 0, 1, 32, 1);
+	glScalef(robotBodyWidth / 3, robotBodyLength * 1.5, robotBodyLength * 1.5);
+	glRotatef(90, 0, 1, 0);
+	glTranslatef(0, -robotBodyLength * 3.5, 0);
+	glPushMatrix();
+	glTranslatef(0, 0, -1);
+	gluCylinder(gluNewQuadric(), 1, 2.3, 1, 20, 10);
+	glPopMatrix();
+	gluCylinder(gluNewQuadric(), 2.3, 1, 1, 20, 10);
+	glPushMatrix();
+	glTranslatef(0, 0, 1);
+	gluDisk(gluNewQuadric(), 0, 1, 32, 1);
+	glPopMatrix();
+	glTranslatef(0, 0, -robotBodyLength * 0.7);
+	glTranslatef(0, 0, -0.95);
+	glRotatef(180, 0, 1, 0);
+	gluDisk(gluNewQuadric(), 0, 1, 32, 1);
 	glPopMatrix();
 }
 
@@ -1129,35 +1112,35 @@ void drawCannon()
 	glTranslatef(control, 0, 12);
 	glRotatef(-90, 1, 0, 0);
 	glPushMatrix();
-		glTranslatef(0, 0, 0.7);
-		//Head
-		gluSphere(gluNewQuadric(), 0.25, 20, 10);
-		//Animated the gun upwards when cannon is hit
-		if (cannonHit) {
-			glRotatef(70, 1, 0, 0);
+	glTranslatef(0, 0, 0.7);
+	//Head
+	gluSphere(gluNewQuadric(), 0.25, 20, 10);
+	//Animated the gun upwards when cannon is hit
+	if (cannonHit) {
+		glRotatef(70, 1, 0, 0);
+	}
+	glRotatef(-90, 1, 0, 0);
+	//Gun
+	gluCylinder(gluNewQuadric(), 0.05, 0.05, 0.8, 20, 10);
+	if (cannonHit == false) {
+		//Animates bullets forward
+		if (proj == 0) {
+			bulletX = control;
 		}
-		glRotatef(-90, 1, 0, 0);
-		//Gun
+		else {
+			glTranslatef(-control + bulletX, 0, 0);
+		}
+		glTranslatef(0, 0, proj);
+		//Bullet
+		glPushMatrix();
+		glColor3f(1, 0, 0);
+		gluDisk(gluNewQuadric(), 0, 0.05, 20, 10);
 		gluCylinder(gluNewQuadric(), 0.05, 0.05, 0.8, 20, 10);
-		if (cannonHit == false) {
-			//Animates bullets forward
-			if (proj == 0) {
-				bulletX = control;
-			}
-			else {
-				glTranslatef(-control + bulletX, 0, 0);
-			}
-			glTranslatef(0, 0, proj);
-			//Bullet
-			glPushMatrix();
-				glColor3f(1,0,0);
-				gluDisk(gluNewQuadric(), 0, 0.05, 20, 10);
-				gluCylinder(gluNewQuadric(), 0.05, 0.05, 0.8, 20, 10);
-			glPopMatrix();
-		}
+		glPopMatrix();
+	}
 	glPopMatrix();
 	//Base of the cannon
-	glColor3f(0.2,0.2,0.2);
+	glColor3f(0.2, 0.2, 0.2);
 	gluCylinder(gluNewQuadric(), 0.4, 0.2, 0.8, 20, 10);
 
 	glDisable(GL_TEXTURE_GEN_S);
